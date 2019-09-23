@@ -1,7 +1,5 @@
 package Principal;
 
-import java.util.ArrayList;
-
 public class Amostra {
 	private float[] Atributos;
 	private int Classe = 0;
@@ -20,7 +18,5 @@ public class Amostra {
 
 	public void setAtributos(float[] atributos) {
 		Atributos = atributos;
-	}
-	
-	
+	}	
 }
