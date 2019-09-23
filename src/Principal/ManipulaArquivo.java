@@ -30,14 +30,13 @@ public class ManipulaArquivo {
 				
 				// Lê atributos e classe correspondente por amostra (aplicando ou não z-score para normalizar)
 				i = 0;
-				somas = new float[qtdAtributos];
-				atributos = new float[qtdAtributos];
-				amostra = new Amostra();
-				
+				somas = new float[qtdAtributos];				
 				for(i = 0; i < qtdLinhas; i++) {
 					linha = lerArquivo.readLine();
 					arrayLinha = linha.split(" ");
 					
+					amostra = new Amostra();
+					atributos = new float[qtdAtributos];
 					for(j = 0; j < qtdAtributos; j++) {
 						atributos[j] = Float.parseFloat(arrayLinha[j]);
 						somas[j] += atributos[j]; // vai somando, caso posteriormente precise aplicar o z-score
