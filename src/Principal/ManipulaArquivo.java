@@ -7,15 +7,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ManipulaArquivo {
-
-	public static ArrayList<Amostra> lerAmostras (String caminho, boolean zScore) {
-		int i, j, qtdLinhas = 0, qtdAtributos = 0;
+	private ArrayList<Amostra> amostras; 
+	int i, j, qtdLinhas = 0, qtdAtributos = 0;
+	float[] atributos, somas;
+	Amostra amostra = null;
+	
+	public ArrayList<Amostra> lerAmostras (String caminho, boolean zScore) {
 		String linha = "";
-		String[] arrayLinha;
-		float[] atributos, somas, medias = null, variancias = null, desviosPadroes = null;
-		float auxVariancia = 0;
-		Amostra amostra = null;
-		ArrayList<Amostra> amostras = new ArrayList<Amostra>();
+		String[] arrayLinha;		
 		
 		try {
 			FileReader arquivo = new FileReader(caminho);
@@ -30,6 +29,7 @@ public class ManipulaArquivo {
 				
 				// Lê atributos e classe correspondente por amostra (aplicando ou não z-score para normalizar)
 				i = 0;
+				amostras = new ArrayList<Amostra>();
 				somas = new float[qtdAtributos];				
 				for(i = 0; i < qtdLinhas; i++) {
 					linha = lerArquivo.readLine();
@@ -48,26 +48,7 @@ public class ManipulaArquivo {
 				}
 				
 				if(zScore) {
-					medias = new float[qtdAtributos];
-					variancias = new float[qtdAtributos];
-					desviosPadroes = new float[qtdAtributos];
-					atributos = new float[qtdAtributos];
-					
-					for(i = 0; i < qtdAtributos; i++) {
-						medias[i] = somas[i] / qtdLinhas;
-						for(j = 0; j < qtdLinhas; j++) {
-							auxVariancia += (amostras.get(j).getAtributos()[i] - medias[i]);
-						}
-						variancias[i] = ((float) Math.pow(auxVariancia, 2)) / (qtdLinhas - 1);
-						desviosPadroes[i] = (float) Math.sqrt(variancias[i]);
-					}
-					 
-					for(i = 0; i < qtdLinhas; i++) {
-						for(j = 0; j < qtdAtributos; j++) {
-							atributos[j] = (amostras.get(i).getAtributos()[j] - medias[j])/ (desviosPadroes[j]);
-						}
-						amostras.get(i).setAtributos(atributos);
-					}
+					aplicaZScore();					
 				}
 				arquivo.close();
 			}catch(IOException e) {
@@ -85,5 +66,30 @@ public class ManipulaArquivo {
 			System.out.println(" "+Integer.toString(amostras.get(i).getClasse()));
 		}
 		return amostras;
+	}
+	
+	private void aplicaZScore() {
+		float[] medias = null, variancias = null, desviosPadroes = null;
+		float auxVariancia = 0;
+		
+		medias = new float[qtdAtributos];
+		variancias = new float[qtdAtributos];
+		desviosPadroes = new float[qtdAtributos];
+		
+		for(i = 0; i < qtdAtributos; i++) {
+			medias[i] = somas[i] / qtdLinhas;
+			auxVariancia = 0;
+			for(j = 0; j < qtdLinhas; j++) {
+				auxVariancia += ((float) Math.pow((amostras.get(j).getAtributos()[i] - medias[i]), 2));
+			}
+			variancias[i] = auxVariancia / (qtdLinhas - 1);
+			desviosPadroes[i] = (float) Math.sqrt(variancias[i]);
+		}
+		 
+		for(i = 0; i < qtdLinhas; i++) {
+			for(j = 0; j < qtdAtributos; j++) {
+				amostras.get(i).getAtributos()[j] = (amostras.get(i).getAtributos()[j] - medias[j])/ (desviosPadroes[j]);
+			}
+		}
 	}
 }

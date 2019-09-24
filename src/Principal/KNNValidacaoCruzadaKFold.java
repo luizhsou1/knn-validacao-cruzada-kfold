@@ -9,6 +9,7 @@ public class KNNValidacaoCruzadaKFold {
 		String caminho;
 		int qtdVizinhosKNN, qtdParticoesKFold;
 		boolean zScore = false;
+		ManipulaArquivo manipulaArquivo;
 		ArrayList<Amostra> amostras;
 		
 		if (ValidaEntrada.validaArgs(args)) {
@@ -19,7 +20,8 @@ public class KNNValidacaoCruzadaKFold {
 				zScore = args[3].toLowerCase().equals("z");
 			}
 			
-			amostras = ManipulaArquivo.lerAmostras(caminho, false);
+			manipulaArquivo = new ManipulaArquivo();
+			amostras = manipulaArquivo.lerAmostras(caminho, zScore);
 			if (amostras != null) {
 				 System.out.println(""+Integer.toString(amostras.size()));
 			}
